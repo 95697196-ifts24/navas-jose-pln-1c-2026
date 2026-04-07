@@ -7,6 +7,7 @@
 jupyter
 jupyterlab
 ipywidgets
+watermark
 
 # --- Análisis de datos ---
 pandas
@@ -21,6 +22,7 @@ playwright
 
 # --- PLN ---
 nltk
+spacy
 
 # --- Visualización ---
 matplotlib
