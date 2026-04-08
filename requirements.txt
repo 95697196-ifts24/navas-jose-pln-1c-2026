@@ -19,6 +19,12 @@ beautifulsoup4
 trafilatura
 scrapling[all]>=0.4.2
 playwright
+yt-dlp
+
+# --- Audio y transcripción ---
+openai-whisper
+faster-whisper
+ffmpeg-python
 
 # --- PLN ---
 nltk
