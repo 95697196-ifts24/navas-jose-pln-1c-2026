@@ -1,0 +1,14 @@
+[
+  {
+    "titulo": "Qué es la inteligencia artificial",
+    "texto": "La inteligencia artificial (IA) es la simulación de procesos de inteligencia humana por sistemas informáticos. Incluye el aprendizaje, el razonamiento y la autocorrección. Empresas como Google, Microsoft y OpenAI lideran el desarrollo de estas tecnologías. En Argentina, el gobierno nacional lanzó un plan de adopción de IA para el sector público."
+  },
+  {
+    "titulo": "IA en el periodismo argentino",
+    "texto": "El periodismo enfrenta una transformación profunda debido a la inteligencia artificial. Medios como La Nación, Infobae y Clarín comenzaron a usar herramientas de IA para automatizar la generación de noticias. Organizaciones como Chequeado usan sistemas automáticos para detectar desinformación. La Universidad de Buenos Aires investiga el impacto de los algoritmos en la agenda mediática argentina."
+  },
+  {
+    "titulo": "Regulación de IA en América Latina",
+    "texto": "La Unión Europea aprobó el primer marco regulatorio de inteligencia artificial. En América Latina, Brasil y Chile avanzan en proyectos de ley similares. La Argentina, a través del Ministerio de Ciencia y Tecnología, trabaja en lineamientos éticos para el uso de IA en el Estado. El CONICET y la UBA participan en los debates."
+  }
+]
