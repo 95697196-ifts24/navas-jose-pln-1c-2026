@@ -24,3 +24,10 @@ SYNC.md
 # Carpeta de trabajo
 docs/
 007_tpi_2/legado/
+
+# Archivos temporales de audio (generados por yt-dlp/Whisper)
+audio_tpi1
+audio_tpi1.mp3
+*.mp3
+*.mp4
+*.wav
