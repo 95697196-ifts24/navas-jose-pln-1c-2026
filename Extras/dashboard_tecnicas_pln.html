@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Técnicas PLN — TPI 2</title>
+<style>
+  :root {
+    --azul:    #1a73e8;
+    --verde:   #1e8e4a;
+    --naranja: #e37400;
+    --violeta: #7b1fa2;
+    --rojo:    #c62828;
+    --gris:    #455a64;
+    --fondo:   #f4f6f9;
+    --card:    #ffffff;
+    --borde:   #dde1e7;
+    --texto:   #1c2536;
+    --muted:   #6b7684;
+    --code-bg: #f0f4f8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: linear-gradient(135deg, #1a237e 0%, #1565c0 60%, #0288d1 100%);
+    color: #fff;
+    padding: 36px 40px 28px;
+  }
+  header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.3px; }
+  header p  { margin-top: 6px; opacity: .85; font-size: .95rem; max-width: 680px; }
+  .header-meta {
+    display: flex; gap: 20px; margin-top: 18px; flex-wrap: wrap;
+  }
+  .badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: .8rem;
+    font-weight: 500;
+  }
+
+  /* ─── LAYOUT ─── */
+  main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 60px; }
+
+  /* ─── PIPELINE VISUAL ─── */
+  .pipeline {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 4px; margin-bottom: 36px;
+    background: var(--card); border: 1px solid var(--borde);
+    border-radius: 12px; padding: 18px 22px;
+  }
+  .pipeline-step {
+    background: var(--fondo); border: 1.5px solid var(--borde);
+    border-radius: 8px; padding: 8px 16px;
+    font-weight: 600; font-size: .82rem; white-space: nowrap;
+  }
+  .pipeline-arrow { color: var(--muted); font-size: 1.1rem; padding: 0 2px; }
+  .pipeline-step.highlight { background: #e8f0fe; border-color: var(--azul); color: var(--azul); }
+
+  /* ─── SECTION TITLES ─── */
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.15rem; font-weight: 700;
+    margin-bottom: 16px; margin-top: 36px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--borde);
+  }
+  .section-dot {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* ─── CARD GRID ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+  }
+  .grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: box-shadow .15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.09); }
+
+  .card-header {
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .card-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .card-title { font-size: .95rem; font-weight: 700; }
+  .card-lib   { font-size: .75rem; color: var(--muted); margin-top: 1px; font-family: monospace; }
+
+  .card-desc  { font-size: .85rem; color: #334155; }
+
+  .tag-row    { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    border-radius: 20px; padding: 3px 10px;
+    font-size: .72rem; font-weight: 600; border: 1px solid transparent;
+  }
+
+  .when-box {
+    background: #f8f9fc; border-left: 3px solid var(--azul);
+    border-radius: 0 6px 6px 0; padding: 8px 12px;
+    font-size: .8rem;
+  }
+  .when-box strong { display: block; margin-bottom: 3px; font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--azul); }
+
+  .limit-box {
+    background: #fff8f0; border-left: 3px solid var(--naranja);
+    border-radius: 0 6px 6px 0; padding: 8px 12px;
+    font-size: .78rem; color: #5c3b00;
+  }
+  .limit-box strong { display: block; margin-bottom: 2px; font-size: .73rem; text-transform: uppercase; letter-spacing: .5px; color: var(--naranja); }
+
+  code {
+    background: var(--code-bg); border-radius: 4px;
+    padding: 1px 5px; font-size: .8rem; font-family: 'Cascadia Code', 'Fira Code', monospace;
+  }
+  pre {
+    background: #1e2836; color: #e2e8f0;
+    border-radius: 8px; padding: 14px 16px;
+    font-size: .78rem; font-family: 'Cascadia Code', 'Fira Code', monospace;
+    overflow-x: auto; line-height: 1.6;
+  }
+  pre .kw  { color: #93c5fd; }
+  pre .fn  { color: #86efac; }
+  pre .st  { color: #fcd34d; }
+  pre .cm  { color: #94a3b8; font-style: italic; }
+  pre .nm  { color: #f9a8d4; }
+
+  /* ─── COLOR SCHEMES PER CATEGORY ─── */
+  .cat-adq   { --cat: var(--verde);   --cat-bg: #e8f5e9; --cat-tag: #c8e6c9; }
+  .cat-pre   { --cat: var(--violeta); --cat-bg: #f3e5f5; --cat-tag: #e1bee7; }
+  .cat-vec   { --cat: var(--azul);    --cat-bg: #e8f0fe; --cat-tag: #c5d8fb; }
+  .cat-viz   { --cat: var(--naranja); --cat-bg: #fff3e0; --cat-tag: #ffe0b2; }
+  .cat-sem   { --cat: var(--rojo);    --cat-bg: #fce8e8; --cat-tag: #ffcdd2; }
+  .cat-flu   { --cat: var(--gris);    --cat-bg: #eceff1; --cat-tag: #cfd8dc; }
+
+  .card.cat-adq .card-icon  { background: var(--cat-bg); }
+  .card.cat-pre .card-icon  { background: var(--cat-bg); }
+  .card.cat-vec .card-icon  { background: var(--cat-bg); }
+  .card.cat-viz .card-icon  { background: var(--cat-bg); }
+  .card.cat-sem .card-icon  { background: var(--cat-bg); }
+  .card.cat-flu .card-icon  { background: var(--cat-bg); }
+
+  .tag.cat-adq { background: var(--cat-tag); color: var(--verde); border-color: #a5d6a7; }
+  .tag.cat-pre { background: var(--cat-tag); color: var(--violeta); border-color: #ce93d8; }
+  .tag.cat-vec { background: var(--cat-tag); color: var(--azul); border-color: #90b8f8; }
+  .tag.cat-viz { background: var(--cat-tag); color: var(--naranja); border-color: #ffb74d; }
+  .tag.cat-sem { background: var(--cat-tag); color: var(--rojo); border-color: #ef9a9a; }
+  .tag.cat-flu { background: var(--cat-tag); color: var(--gris); border-color: #b0bec5; }
+
+  .section-dot.adq { background: var(--verde); }
+  .section-dot.pre { background: var(--violeta); }
+  .section-dot.vec { background: var(--azul); }
+  .section-dot.viz { background: var(--naranja); }
+  .section-dot.sem { background: var(--rojo); }
+  .section-dot.flu { background: var(--gris); }
+
+  /* ─── COMPARISON TABLE ─── */
+  .cmp-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--card); border: 1px solid var(--borde);
+    border-radius: 10px; overflow: hidden; font-size: .83rem;
+  }
+  .cmp-table th {
+    background: #f0f4f8; padding: 10px 14px;
+    text-align: left; font-weight: 700; font-size: .8rem;
+    border-bottom: 1px solid var(--borde);
+  }
+  .cmp-table td {
+    padding: 9px 14px; border-bottom: 1px solid #f1f3f5; vertical-align: top;
+  }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table tr:hover td { background: #f8f9fc; }
+  .check { color: var(--verde); font-weight: 700; }
+  .cross { color: var(--rojo); font-weight: 700; }
+
+  /* ─── ROADMAP ─── */
+  .roadmap {
+    display: flex; flex-direction: column; gap: 0;
+    background: var(--card); border: 1px solid var(--borde);
+    border-radius: 12px; overflow: hidden;
+  }
+  .rm-step {
+    display: grid; grid-template-columns: 180px 1fr;
+    border-bottom: 1px solid var(--borde);
+  }
+  .rm-step:last-child { border-bottom: none; }
+  .rm-label {
+    padding: 16px 20px;
+    font-weight: 700; font-size: .82rem;
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 1px solid var(--borde);
+    background: #f8f9fc;
+  }
+  .rm-phase { font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 3px; }
+  .rm-body { padding: 16px 20px; }
+  .rm-body ul { padding-left: 16px; }
+  .rm-body li { margin-bottom: 4px; font-size: .83rem; }
+  .rm-file { font-size: .75rem; color: var(--azul); font-family: monospace; }
+
+  /* ─── CORPUS RECS ─── */
+  .recs-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px;
+  }
+  .rec-card {
+    background: var(--card); border: 1px solid var(--borde);
+    border-radius: 12px; padding: 20px;
+  }
+  .rec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .rec-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .85rem; flex-shrink: 0;
+  }
+  .rec-title { font-weight: 700; font-size: .95rem; }
+  .rec-sub   { font-size: .78rem; color: var(--muted); }
+  .rec-body  { font-size: .83rem; margin-bottom: 10px; }
+  .rec-links { display: flex; flex-direction: column; gap: 4px; }
+  .rec-link  { font-size: .78rem; color: var(--azul); text-decoration: none; font-family: monospace; }
+  .rec-link:hover { text-decoration: underline; }
+  .rec-star { background: #fffde7; border: 1px solid #ffe082; border-radius: 6px; padding: 6px 10px; font-size: .78rem; color: #5c4a00; margin-top: 8px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center; padding: 24px;
+    font-size: .78rem; color: var(--muted);
+    border-top: 1px solid var(--borde);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <h1>Dashboard de Técnicas PLN</h1>
+  <p>Material de apoyo para el TPI 2 — Text Mining y Análisis Discursivo Comparado. Resumen de todas las técnicas del módulo con orientaciones para su aplicación en el trabajo integrador.</p>
+  <div class="header-meta">
+    <span class="badge">Procesamiento de Lenguaje Natural</span>
+    <span class="badge">IFTS 24 · 2026</span>
+    <span class="badge">TPI 2 · Análisis Comparado</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- PIPELINE GENERAL -->
+  <div style="margin-bottom:8px; font-weight:700; font-size:.85rem; color:var(--muted); margin-top:8px;">FLUJO GENERAL DEL TPI 2</div>
+  <div class="pipeline">
+    <div class="pipeline-step highlight">1. Definir corpus</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">2. Adquirir textos</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">3. Validar CSV</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">4. spaCy</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">5. Frecuencias + NER + Bigramas</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">6. BoW + TF-IDF</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">7. Visualizaciones</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">8. Lectura cercana</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step highlight">9. Interpretación</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. ADQUISICIÓN -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot adq"></div>
+    Módulo 1 — Adquisición de corpus
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">002_adquisicion_corpus/</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card cat-adq">
+      <div class="card-header">
+        <div class="card-icon">🌐</div>
+        <div>
+          <div class="card-title">Requests + BeautifulSoup</div>
+          <div class="card-lib">requests · bs4</div>
+        </div>
+      </div>
+      <div class="card-desc">Descarga HTML de páginas estáticas y navega el DOM para extraer texto, enlaces y metadatos. Ideal para sitios sin JavaScript dinámico.</div>
+      <div class="tag-row">
+        <span class="tag cat-adq">scraping estático</span>
+        <span class="tag cat-adq">DOM / CSS selectors</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Útil para medios con HTML simple (Cenital, Anfibia, Chequeado). Permite extraer lista de URLs de una sección o autor.
+      </div>
+      <pre><span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+r = requests.<span class="fn">get</span>(<span class="st">"https://cenital.com/..."</span>)
+soup = BeautifulSoup(r.text, <span class="st">"html.parser"</span>)
+texto = soup.<span class="fn">find</span>(<span class="st">"article"</span>).<span class="fn">get_text</span>()</pre>
+    </div>
+
+    <div class="card cat-adq">
+      <div class="card-header">
+        <div class="card-icon">📄</div>
+        <div>
+          <div class="card-title">Trafilatura</div>
+          <div class="card-lib">trafilatura</div>
+        </div>
+      </div>
+      <div class="card-desc">Extrae el texto principal de un artículo web descartando automáticamente menús, publicidades y elementos de navegación. Es la herramienta más limpia para medios periodísticos.</div>
+      <div class="tag-row">
+        <span class="tag cat-adq">extracción limpia</span>
+        <span class="tag cat-adq">periodismo digital</span>
+        <span class="tag cat-adq">recomendada TPI 2</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — la más recomendada</strong>
+        Una sola llamada por URL. Devuelve texto limpio listo para el corpus. Compatible con Cenital, Anfibia, Infobae, La Nación.
+      </div>
+      <pre><span class="kw">import</span> trafilatura
+descargado = trafilatura.<span class="fn">fetch_url</span>(url)
+texto = trafilatura.<span class="fn">extract</span>(
+    descargado,
+    include_comments=<span class="nm">False</span>,
+    favor_precision=<span class="nm">True</span>,
+)</pre>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        Puede fallar en sitios con mucho JavaScript. Combinar con Playwright si es necesario.
+      </div>
+    </div>
+
+    <div class="card cat-adq">
+      <div class="card-header">
+        <div class="card-icon">🎭</div>
+        <div>
+          <div class="card-title">Playwright</div>
+          <div class="card-lib">playwright</div>
+        </div>
+      </div>
+      <div class="card-desc">Controla un browser real (Chromium/Firefox) para páginas dinámicas que cargan contenido con JavaScript. Permite esperar a que los elementos estén presentes antes de extraer.</div>
+      <div class="tag-row">
+        <span class="tag cat-adq">scraping dinámico</span>
+        <span class="tag cat-adq">JavaScript</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Usar solo si Trafilatura falla en el medio elegido. Más lento pero más robusto ante sitios complejos.
+      </div>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        Lento, requiere instalar browsers (~100 MB). Usar como fallback, no como primera opción.
+      </div>
+    </div>
+
+    <div class="card cat-adq">
+      <div class="card-header">
+        <div class="card-icon">🗂️</div>
+        <div>
+          <div class="card-title">Pandas — armado del CSV</div>
+          <div class="card-lib">pandas · pathlib</div>
+        </div>
+      </div>
+      <div class="card-desc">Una vez extraídos los textos, se estructuran en un DataFrame con las columnas requeridas por la consigna y se exportan como CSV o JSONL.</div>
+      <div class="tag-row">
+        <span class="tag cat-adq">estructura de datos</span>
+        <span class="tag cat-adq">CSV / JSONL</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — obligatorio</strong>
+        El corpus debe tener: <code>id · fecha · medio · autor · titulo · texto · grupo_comparacion</code>. El notebook valida estas columnas automáticamente.
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.<span class="fn">DataFrame</span>(registros)
+df.<span class="fn">to_csv</span>(<span class="st">"corpus_tpi2.csv"</span>, index=<span class="nm">False</span>)</pre>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. PREPROCESAMIENTO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot pre"></div>
+    Módulo 2 — Preprocesamiento con spaCy
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">003_spacy/</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">✂️</div>
+        <div>
+          <div class="card-title">Tokenización</div>
+          <div class="card-lib">spacy · nlp(text)</div>
+        </div>
+      </div>
+      <div class="card-desc">Divide el texto en unidades mínimas (tokens): palabras, signos de puntuación, espacios. Es el primer paso de cualquier pipeline NLP. spaCy aplica reglas lingüísticas para el español.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">primer paso</span>
+        <span class="tag cat-pre">obligatorio</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Se aplica implícitamente al llamar <code>nlp(texto)</code>. Genera el objeto <code>Doc</code> base para lematización, NER y todo el resto.
+      </div>
+    </div>
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">📝</div>
+        <div>
+          <div class="card-title">Lematización</div>
+          <div class="card-lib">token.lemma_</div>
+        </div>
+      </div>
+      <div class="card-desc">Reduce cada palabra a su forma base: "comieron" → "comer", "políticas" → "política". Agrupa variantes flexivas para que los conteos no queden dispersos en formas distintas del mismo concepto.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">normalización</span>
+        <span class="tag cat-pre">morfología</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Fundamental para que BoW y TF-IDF agrupen correctamente las variantes. Usar <code>token.lemma_.lower()</code> sobre el texto de contenido filtrado.
+      </div>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        <code>es_core_news_sm</code> no lematiza bien el voseo rioplatense ("tenés" → "tener" puede fallar). Considerar un diccionario de corrección manual.
+      </div>
+    </div>
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">🚫</div>
+        <div>
+          <div class="card-title">Filtrado de stopwords</div>
+          <div class="card-lib">token.is_stop · token.is_alpha</div>
+        </div>
+      </div>
+      <div class="card-desc">Descarta artículos, preposiciones y conjunciones ("el", "de", "que", "y") que aparecen en todos los textos sin aportar información temática. Reduce ruido en los conteos de frecuencia.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">filtrado</span>
+        <span class="tag cat-pre">ruido léxico</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Usar <code>token.is_alpha and not token.is_stop</code> para construir el campo <code>texto_contenido</code>. Es la base para BoW y TF-IDF significativos.
+      </div>
+      <pre><span class="cm"># Texto de contenido (sin ruido)</span>
+contenido = [
+    <span class="fn">token.lemma_</span>.lower()
+    <span class="kw">for</span> token <span class="kw">in</span> doc
+    <span class="kw">if</span> token.is_alpha <span class="kw">and</span> <span class="kw">not</span> token.is_stop
+]</pre>
+    </div>
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">🏷️</div>
+        <div>
+          <div class="card-title">NER — Entidades Nombradas</div>
+          <div class="card-lib">doc.ents · ent.label_</div>
+        </div>
+      </div>
+      <div class="card-desc">Detecta y clasifica nombres propios: personas (PER), organizaciones (ORG), lugares (LOC) y misceláneos (MISC). Permite ver quiénes y qué instituciones estructuran el discurso de cada grupo.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">personas</span>
+        <span class="tag cat-pre">organizaciones</span>
+        <span class="tag cat-pre">lugares</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — muy útil para comparar</strong>
+        Las entidades revelan qué actores, medios y lugares nombra cada grupo. Una diferencia sistemática en NER puede ser un hallazgo discursivo central.
+      </div>
+      <pre><span class="kw">for</span> ent <span class="kw">in</span> doc.ents:
+    <span class="fn">print</span>(ent.text, ent.label_)
+<span class="cm"># "OpenAI" MISC, "Argentina" LOC</span></pre>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        <code>es_core_news_sm</code> comete errores frecuentes en entidades muy específicas o neologismos. Verificar manualmente los más relevantes.
+      </div>
+    </div>
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">⚙️</div>
+        <div>
+          <div class="card-title">POS Tagging</div>
+          <div class="card-lib">token.pos_ · token.dep_</div>
+        </div>
+      </div>
+      <div class="card-desc">Etiqueta cada token con su categoría gramatical: NOUN, VERB, ADJ, ADV, PROPN, etc. Permite filtrar solo sustantivos o adjetivos para análisis de valoración o análisis temático más específico.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">gramática</span>
+        <span class="tag cat-pre">morfología</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Opcional pero útil: filtrar solo sustantivos (<code>NOUN</code>) para observar el universo léxico de temas, o adjetivos (<code>ADJ</code>) para analizar valoración.
+      </div>
+    </div>
+
+    <div class="card cat-pre">
+      <div class="card-header">
+        <div class="card-icon">🔄</div>
+        <div>
+          <div class="card-title">Pipelines de preprocesamiento</div>
+          <div class="card-lib">spaCy · Stanza · spacy-stanza</div>
+        </div>
+      </div>
+      <div class="card-desc">Diferentes estrategias producen diferentes representaciones: Pipeline A (naive: lowercase), Pipeline B (lemas + stopwords), Pipeline C (con correcciones manuales). La elección es una decisión metodológica que debe justificarse.</div>
+      <div class="tag-row">
+        <span class="tag cat-pre">decisión metodológica</span>
+        <span class="tag cat-pre">reproducibilidad</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        El notebook ya implementa el Pipeline B adaptado. Documentar qué modelo y versión se usa. Si hay mucho voseo, agregar correcciones al diccionario.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. VECTORIZACIÓN -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot vec"></div>
+    Módulo 3 — Vectorización sparse
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">005_Vectorizacion/ · 006_lab_integrador_guiado/</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card cat-vec">
+      <div class="card-header">
+        <div class="card-icon">🎒</div>
+        <div>
+          <div class="card-title">Bag of Words (BoW)</div>
+          <div class="card-lib">CountVectorizer — sklearn</div>
+        </div>
+      </div>
+      <div class="card-desc">Representa cada documento como un vector de conteos de palabras. Ignora el orden; solo importa la presencia y frecuencia. Produce una matriz documentos × términos donde cada celda es la cantidad de apariciones.</div>
+      <div class="tag-row">
+        <span class="tag cat-vec">frecuencias absolutas</span>
+        <span class="tag cat-vec">volumen léxico</span>
+        <span class="tag cat-vec">obligatorio TPI 2</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — obligatorio</strong>
+        Muestra qué palabras dominan el vocabulario de cada grupo por volumen. Combinar siempre con TF-IDF para distinguir volumen de especificidad.
+      </div>
+      <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> CountVectorizer
+vec = <span class="fn">CountVectorizer</span>(lowercase=<span class="nm">False</span>, min_df=<span class="nm">1</span>, max_df=<span class="nm">0.95</span>)
+matriz = vec.<span class="fn">fit_transform</span>(corpus_por_grupo[<span class="st">"texto"</span>])
+vocab = vec.<span class="fn">get_feature_names_out</span>()</pre>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        Palabras muy frecuentes (aunque no sean stopwords) dominan la vista. No distingue si un término es importante o simplemente abundante.
+      </div>
+    </div>
+
+    <div class="card cat-vec">
+      <div class="card-header">
+        <div class="card-icon">⚖️</div>
+        <div>
+          <div class="card-title">TF-IDF</div>
+          <div class="card-lib">TfidfVectorizer — sklearn</div>
+        </div>
+      </div>
+      <div class="card-desc">Pondera cada término por su frecuencia en el documento (TF) multiplicada por la rareza en el corpus completo (IDF). Las palabras comunes a todos los documentos bajan de peso; las específicas de cada grupo suben.</div>
+      <div class="tag-row">
+        <span class="tag cat-vec">especificidad</span>
+        <span class="tag cat-vec">distintividad</span>
+        <span class="tag cat-vec">obligatorio TPI 2</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — obligatorio y clave</strong>
+        Revela qué términos son <em>más propios</em> de cada grupo (no solo los más frecuentes). El heatmap de TF-IDF es la visualización más informativa para el análisis comparado.
+      </div>
+      <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> TfidfVectorizer
+vec = <span class="fn">TfidfVectorizer</span>(lowercase=<span class="nm">False</span>, min_df=<span class="nm">1</span>, max_df=<span class="nm">0.95</span>)
+matriz = vec.<span class="fn">fit_transform</span>(corpus_por_grupo[<span class="st">"texto"</span>])
+<span class="cm"># Peso alto = término específico de ese grupo</span></pre>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        Con corpus de 6-10 textos el IDF tiene poco poder discriminante. Los pesos son orientativos; siempre volver al fragmento para confirmar.
+      </div>
+    </div>
+
+    <div class="card cat-vec">
+      <div class="card-header">
+        <div class="card-icon">🔗</div>
+        <div>
+          <div class="card-title">N-gramas (bigramas / trigramas)</div>
+          <div class="card-lib">CountVectorizer(ngram_range=(2,2))</div>
+        </div>
+      </div>
+      <div class="card-desc">Captura secuencias de N palabras consecutivas. Los bigramas (2 palabras) detectan colocaciones como "inteligencia artificial", "cambio climático" o "banco central" que los unigramas fragmentan.</div>
+      <div class="tag-row">
+        <span class="tag cat-vec">colocaciones</span>
+        <span class="tag cat-vec">contexto</span>
+        <span class="tag cat-vec">obligatorio TPI 2</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — observables iniciales</strong>
+        Los bigramas por grupo revelan asociaciones conceptuales que los términos sueltos ocultan. Un bigrama muy frecuente en un grupo puede ser un hallazgo discursivo en sí mismo.
+      </div>
+      <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> CountVectorizer
+vec_bi = <span class="fn">CountVectorizer</span>(
+    lowercase=<span class="nm">False</span>,
+    ngram_range=(<span class="nm">2</span>, <span class="nm">2</span>),
+    min_df=<span class="nm">1</span>
+)
+matriz_bi = vec_bi.<span class="fn">fit_transform</span>(df[<span class="st">"texto_contenido"</span>])</pre>
+      <div class="limit-box">
+        <strong>Limitación</strong>
+        Con corpus pequeño, la mayoría de bigramas aparece solo 1 vez. Revisar manual y selectivamente los más relevantes.
+      </div>
+    </div>
+
+    <div class="card cat-vec" style="grid-column: span 1;">
+      <div class="card-header">
+        <div class="card-icon">📐</div>
+        <div>
+          <div class="card-title">Similitud coseno</div>
+          <div class="card-lib">cosine_similarity — sklearn</div>
+        </div>
+      </div>
+      <div class="card-desc">Mide el ángulo entre dos vectores en el espacio de términos. Un valor cercano a 1 indica textos muy similares; cercano a 0, textos muy distintos. Funciona sobre matrices BoW y TF-IDF.</div>
+      <div class="tag-row">
+        <span class="tag cat-vec">similitud</span>
+        <span class="tag cat-vec">comparación</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Opcional pero útil para argumentar que los dos grupos son efectivamente distintos. Una similitud baja entre grupos confirma la pertinencia del contraste elegido.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TABLA COMPARATIVA BoW vs TF-IDF -->
+  <div style="margin-top: 20px; margin-bottom: 8px; font-weight:700; font-size:.85rem;">COMPARACIÓN BoW vs TF-IDF</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>Bag of Words (BoW)</th>
+        <th>TF-IDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Qué mide</strong></td>
+        <td>Frecuencia absoluta de cada término en el documento</td>
+        <td>Importancia relativa: frecuente en ese doc pero raro en el resto</td>
+      </tr>
+      <tr>
+        <td><strong>Muestra</strong></td>
+        <td>Qué palabras <em>dominan en volumen</em></td>
+        <td>Qué palabras son <em>características y distintivas</em></td>
+      </tr>
+      <tr>
+        <td><strong>Sesgo</strong></td>
+        <td>Favorece términos muy repetidos (incluso si aparecen en todos)</td>
+        <td>Penaliza palabras omnipresentes; premia las específicas</td>
+      </tr>
+      <tr>
+        <td><strong>Mejor para</strong></td>
+        <td>Ver temas centrales por peso bruto, detectar insistencias</td>
+        <td>Identificar el vocabulario que vuelve singular a cada grupo</td>
+      </tr>
+      <tr>
+        <td><strong>En análisis discursivo</strong></td>
+        <td>Muestra la <em>agenda temática</em> de cada grupo</td>
+        <td>Muestra el <em>registro propio</em> de cada grupo</td>
+      </tr>
+      <tr>
+        <td><strong>Limitación clave</strong></td>
+        <td>No discrimina importancia; "el" podría dominar sin stopwords</td>
+        <td>Con corpus pequeño (6-10 docs), el IDF tiene poco poder</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. VISUALIZACIÓN -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot viz"></div>
+    Módulo 4 — Visualización analítica
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">matplotlib · seaborn</span>
+  </div>
+
+  <div class="grid grid-3">
+
+    <div class="card cat-viz">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <div>
+          <div class="card-title">Barras horizontales comparativas</div>
+          <div class="card-lib">sns.barplot(hue=grupo)</div>
+        </div>
+      </div>
+      <div class="card-desc">Compara los N términos más frecuentes de cada grupo lado a lado. Es la visualización más directa para la lectura distante: permite ver similitudes y diferencias de vocabulario de un vistazo.</div>
+      <div class="tag-row">
+        <span class="tag cat-viz">frecuencias</span>
+        <span class="tag cat-viz">comparación directa</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — usar en sección 7</strong>
+        Una de las dos visualizaciones analíticas obligatorias. Mostrar top 10-12 términos por grupo, usando la misma escala de eje X para ambos grupos.
+      </div>
+    </div>
+
+    <div class="card cat-viz">
+      <div class="card-header">
+        <div class="card-icon">🌡️</div>
+        <div>
+          <div class="card-title">Heatmap TF-IDF</div>
+          <div class="card-lib">sns.heatmap(cmap="mako")</div>
+        </div>
+      </div>
+      <div class="card-desc">Mapa de calor donde el color muestra el peso TF-IDF de cada término en cada grupo. Los términos blancos/claros son compartidos; los oscuros son exclusivos del grupo. Es muy efectivo para mostrar distintividad.</div>
+      <div class="tag-row">
+        <span class="tag cat-viz">TF-IDF</span>
+        <span class="tag cat-viz">distintividad</span>
+        <span class="tag cat-viz">muy recomendado</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección 8, visualización clave</strong>
+        Segunda visualización analítica recomendada. Muestra de golpe qué vocabulario es exclusivo de cada grupo versus compartido.
+      </div>
+      <pre><span class="fn">sns.heatmap</span>(
+    matriz_heatmap,
+    cmap=<span class="st">"mako"</span>,
+    linewidths=<span class="nm">0.4</span>,
+    cbar_kws={<span class="st">"label"</span>: <span class="st">"peso TF-IDF"</span>},
+)</pre>
+    </div>
+
+    <div class="card cat-viz">
+      <div class="card-header">
+        <div class="card-icon">📦</div>
+        <div>
+          <div class="card-title">Barras de longitud / balance</div>
+          <div class="card-lib">sns.barplot</div>
+        </div>
+      </div>
+      <div class="card-desc">Compara cantidad de documentos y palabras totales entre los dos grupos. Permite auditar si el corpus está balanceado o si un grupo domina en volumen, lo que condicionaría los resultados.</div>
+      <div class="tag-row">
+        <span class="tag cat-viz">auditoría del corpus</span>
+        <span class="tag cat-viz">balance</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección 5</strong>
+        Ya está implementado en el notebook. Si hay desbalance, mencionarlo en la sección de límites del método.
+      </div>
+    </div>
+
+    <div class="card cat-viz">
+      <div class="card-header">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-title">Tablas de fragmentos</div>
+          <div class="card-lib">pd.DataFrame · display()</div>
+        </div>
+      </div>
+      <div class="card-desc">Muestra citas textuales con contexto alrededor del término buscado. No es un gráfico, pero es una forma de visualizar la evidencia discursiva que justifica los hallazgos cuantitativos.</div>
+      <div class="tag-row">
+        <span class="tag cat-viz">lectura cercana</span>
+        <span class="tag cat-viz">evidencia textual</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección 9, obligatorio</strong>
+        Volver a al menos 3 fragmentos concretos. Esta "visualización" es lo que distingue un análisis discursivo de una simple estadística de palabras.
+      </div>
+    </div>
+
+    <div class="card cat-viz">
+      <div class="card-header">
+        <div class="card-icon">📈</div>
+        <div>
+          <div class="card-title">Principios de diseño visual</div>
+          <div class="card-lib">sns.despine · constrained_layout</div>
+        </div>
+      </div>
+      <div class="card-desc">Criterios para gráficos legibles: paleta accesible (colorblind), ejes sin marcos redundantes (despine), títulos a la izquierda, etiquetas numéricas directas en las barras, sin leyendas innecesarias.</div>
+      <div class="tag-row">
+        <span class="tag cat-viz">accesibilidad</span>
+        <span class="tag cat-viz">claridad</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2</strong>
+        Seguir la configuración del notebook: <code>palette="colorblind"</code>, <code>sns.despine()</code>, títulos explicativos. La rúbrica evalúa "gráficos legibles y bien rotulados" (20%).
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. REPRESENTACIONES SEMÁNTICAS -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot sem"></div>
+    Módulo 5 — Representaciones semánticas
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">008_representaciones_semanticas/ — solo como marco conceptual en TPI 2</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card cat-sem">
+      <div class="card-header">
+        <div class="card-icon">🧠</div>
+        <div>
+          <div class="card-title">Vectores densos (spaCy md)</div>
+          <div class="card-lib">es_core_news_md · doc.similarity()</div>
+        </div>
+      </div>
+      <div class="card-desc">El modelo mediano de spaCy incluye vectores pre-entrenados de 50 dimensiones. Permiten calcular similitud semántica entre palabras o documentos capturando sinónimos y campos conceptuales que BoW no detecta.</div>
+      <div class="tag-row">
+        <span class="tag cat-sem">semántica</span>
+        <span class="tag cat-sem">no permitido en TPI 2</span>
+      </div>
+      <div class="limit-box">
+        <strong>Advertencia para TPI 2</strong>
+        La consigna prohíbe usar embeddings o vectores densos como sustituto del recorrido pedido (BoW + TF-IDF + spaCy + bigramas). Incluir esta técnica fuera del flujo pedido podría restarle validez a la entrega.
+      </div>
+    </div>
+
+    <div class="card cat-sem">
+      <div class="card-header">
+        <div class="card-icon">🔍</div>
+        <div>
+          <div class="card-title">Limitaciones de BoW/TF-IDF</div>
+          <div class="card-lib">contexto conceptual</div>
+        </div>
+      </div>
+      <div class="card-desc">BoW y TF-IDF no capturan: (1) sinónimos ("papá" ≠ "padre"), (2) polisemia ("banco" institución vs asiento), (3) relaciones conceptuales entre campos temáticos, (4) orden y contexto oracional.</div>
+      <div class="tag-row">
+        <span class="tag cat-sem">limitaciones sparse</span>
+        <span class="tag cat-sem">reflexión metodológica</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección de límites del método</strong>
+        Estas limitaciones son exactamente lo que se debe mencionar en la reflexión metodológica (15% de la rúbrica). Argumentar con ejemplos concretos del propio corpus.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. FLUJO DE ANÁLISIS DISCURSIVO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title">
+    <div class="section-dot flu"></div>
+    Módulo 6 — Estrategia de análisis discursivo
+    <span style="font-size:.8rem; font-weight:400; color:var(--muted);">006_lab_integrador_guiado/ · Marco: Moretti · Maeda</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card cat-flu">
+      <div class="card-header">
+        <div class="card-icon">🔭</div>
+        <div>
+          <div class="card-title">Lectura distante</div>
+          <div class="card-lib">Franco Moretti</div>
+        </div>
+      </div>
+      <div class="card-desc">Analizar patrones a gran escala (frecuencias, distribuciones, comparaciones cuantitativas) sin leer cada texto en detalle. Permite detectar recurrencias y contrastes que no serían visibles desde la lectura individual.</div>
+      <div class="tag-row">
+        <span class="tag cat-flu">escala macroscópica</span>
+        <span class="tag cat-flu">patrones</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — secciones 7 y 8</strong>
+        Los conteos, bigramas, BoW y TF-IDF son herramientas de lectura distante. La clave es identificar qué patrones justifican profundizar con lectura cercana.
+      </div>
+    </div>
+
+    <div class="card cat-flu">
+      <div class="card-header">
+        <div class="card-icon">🔬</div>
+        <div>
+          <div class="card-title">Lectura cercana</div>
+          <div class="card-lib">extraer_fragmentos()</div>
+        </div>
+      </div>
+      <div class="card-desc">Volver al texto concreto una vez identificado un patrón cuantitativo. El fragmento permite ver el tono, el marco argumentativo y el contexto que los números no pueden capturar.</div>
+      <div class="tag-row">
+        <span class="tag cat-flu">evidencia textual</span>
+        <span class="tag cat-flu">interpretación</span>
+        <span class="tag cat-flu">obligatorio TPI 2</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección 9, mínimo 3 fragmentos</strong>
+        El retorno al fragmento es el momento donde la computadora deja de hablar y el analista toma la palabra. Sin este paso el trabajo no alcanza el mínimo.
+      </div>
+    </div>
+
+    <div class="card cat-flu">
+      <div class="card-header">
+        <div class="card-icon">💬</div>
+        <div>
+          <div class="card-title">Reflexión metodológica</div>
+          <div class="card-lib">Sección de límites del método</div>
+        </div>
+      </div>
+      <div class="card-desc">Conciencia explícita de qué puede y qué no puede mostrar el enfoque elegido. Qué afirmaciones son sostenibles con la evidencia del corpus y cuáles exceden lo que las representaciones sparse permiten.</div>
+      <div class="tag-row">
+        <span class="tag cat-flu">pensamiento crítico</span>
+        <span class="tag cat-flu">15% rúbrica</span>
+      </div>
+      <div class="when-box">
+        <strong>En TPI 2 — sección final, 15% de la nota</strong>
+        Mencionar: tamaño del corpus, limitaciones del IDF con pocos documentos, errores de NER, pérdida de contexto en BoW, sesgo de lematización.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ROADMAP TPI 2 -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title" style="margin-top:44px;">
+    <div class="section-dot" style="background:#1a73e8;"></div>
+    Roadmap de trabajo — TPI 2
+  </div>
+
+  <div class="roadmap">
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 0</div>
+        Definición del corpus
+        <div style="margin-top:6px; font-size:.72rem; background:#e8f0fe; border-radius:6px; padding:4px 8px; color:var(--azul);">⏱ 1-2 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Elegir la ruta comparativa antes de escribir código</strong>
+        <ul style="margin-top:8px;">
+          <li>Decidir el eje: Medio vs. medio / Columnista vs. columnista / Mismo autor en distintos contextos</li>
+          <li>Definir exactamente los <strong>dos grupos</strong> y el valor de <code>grupo_comparacion</code></li>
+          <li>Verificar que existan al menos 3 artículos por grupo scrapeables con Trafilatura</li>
+          <li>Justificar por qué los grupos son <em>comparables</em> (misma temática, mismo período temporal)</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Ver: TPI_2_Consigna_y_Rubrica.md, sección "Modalidades del corpus"</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 1</div>
+        Adquisición
+        <div style="margin-top:6px; font-size:.72rem; background:#e8f5e9; border-radius:6px; padding:4px 8px; color:var(--verde);">⏱ 2-3 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Construir el CSV del corpus</strong>
+        <ul style="margin-top:8px;">
+          <li>Usar <code>trafilatura.fetch_url()</code> + <code>trafilatura.extract()</code> para cada URL</li>
+          <li>Armar lista de diccionarios con las 7 columnas obligatorias</li>
+          <li>Correr la celda de validación del notebook (entre 6 y 10 textos, dos grupos exactos)</li>
+          <li>Guardar como <code>corpus_tpi2.csv</code> en la misma carpeta del notebook</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Referencia: 002_adquisicion_corpus/002 - PRA/003_Trafilatura_Pandas_CSV.ipynb</div>
+        <div class="rm-file">→ Referencia: 006_lab_integrador_guiado/003 - LAB/001_laboratorio_integrador.ipynb (sección 1)</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 2</div>
+        Procesamiento spaCy
+        <div style="margin-top:6px; font-size:.72rem; background:#f3e5f5; border-radius:6px; padding:4px 8px; color:var(--violeta);">⏱ 1-2 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Generar texto_contenido y entidades</strong>
+        <ul style="margin-top:8px;">
+          <li>Cargar <code>es_core_news_sm</code> con <code>spacy.load()</code></li>
+          <li>Procesar todos los textos con <code>nlp.pipe()</code> en batch</li>
+          <li>Construir columnas <code>texto_lemas</code>, <code>texto_contenido</code> y <code>entidades</code></li>
+          <li>Si el corpus tiene voseo frecuente, agregar correcciones al diccionario de lemas</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Referencia: 003_spacy/002 - PRA/006_preprocesamiento_y_representacion_texto.ipynb</div>
+        <div class="rm-file">→ El código ya está implementado en TPI_2 sección 6</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 3</div>
+        Observables iniciales
+        <div style="margin-top:6px; font-size:.72rem; background:#fff3e0; border-radius:6px; padding:4px 8px; color:var(--naranja);">⏱ 2-3 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Frecuencias, NER y bigramas por grupo</strong>
+        <ul style="margin-top:8px;">
+          <li>Top 12 términos de contenido por grupo (barplot comparativo) → <strong>primera visualización</strong></li>
+          <li>Tabla de entidades nombradas por grupo: ver qué personas/org/lugares menciona cada uno</li>
+          <li>Bigramas por grupo: detectar colocaciones discursivas propias</li>
+          <li><strong>Pausa reflexiva</strong>: anotar en Markdown qué patrones preliminares se ven</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Código implementado en TPI_2 secciones 7 (células 19–22)</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 4</div>
+        BoW + TF-IDF
+        <div style="margin-top:6px; font-size:.72rem; background:#e8f0fe; border-radius:6px; padding:4px 8px; color:var(--azul);">⏱ 1-2 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Representaciones sparse comparadas</strong>
+        <ul style="margin-top:8px;">
+          <li>Concatenar textos de contenido por grupo para vectorización</li>
+          <li>Correr <code>CountVectorizer</code> → tabla top BoW por grupo</li>
+          <li>Correr <code>TfidfVectorizer</code> → tabla top TF-IDF por grupo</li>
+          <li>Heatmap de términos TF-IDF → <strong>segunda visualización analítica</strong></li>
+          <li><strong>Comparar</strong> explícitamente en Markdown: ¿qué muestra BoW que TF-IDF no? ¿Y al revés?</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Código implementado en TPI_2 secciones 8 (células 25–27)</div>
+        <div class="rm-file">→ Referencia conceptual: 005_Vectorizacion/002 - PRA/002_tfidf_y_ngramas.ipynb</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 5</div>
+        Lectura cercana
+        <div style="margin-top:6px; font-size:.72rem; background:#eceff1; border-radius:6px; padding:4px 8px; color:var(--gris);">⏱ 2-3 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Volver al texto con los términos más distintivos</strong>
+        <ul style="margin-top:8px;">
+          <li>Seleccionar al menos 2 términos TF-IDF top de cada grupo</li>
+          <li>Usar <code>extraer_fragmentos()</code> del notebook para recuperar contexto</li>
+          <li>Para cada fragmento: anotar tono, marco argumentativo, función retórica</li>
+          <li>Mínimo <strong>3 fragmentos comentados</strong> (obligatorio para aprobar)</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Código implementado en TPI_2 secciones 9 (células 30–31)</div>
+      </div>
+    </div>
+
+    <div class="rm-step">
+      <div class="rm-label">
+        <div class="rm-phase">Fase 6</div>
+        Escritura interpretativa
+        <div style="margin-top:6px; font-size:.72rem; background:#eceff1; border-radius:6px; padding:4px 8px; color:var(--gris);">⏱ 3-4 hs</div>
+      </div>
+      <div class="rm-body">
+        <strong>Interpretación comparativa + límites del método</strong>
+        <ul style="margin-top:8px;">
+          <li>Responder las 4 preguntas de la sección 10 del notebook con evidencia concreta</li>
+          <li>Vincular cada hallazgo a tabla, gráfico o fragmento específico</li>
+          <li>Escribir sección explícita de <strong>límites del método</strong> (rúbrica 15%)</li>
+          <li>Completar el registro de uso de IA (tabla en sección 0 del notebook)</li>
+          <li>Verificar el checklist final (sección 11)</li>
+        </ul>
+        <div style="margin-top:8px;" class="rm-file">→ Ver rúbrica: TPI_2_Consigna_y_Rubrica.md</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- RECOMENDACIONES DE CORPUS -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title" style="margin-top:44px;">
+    <div class="section-dot" style="background:#0f9d58;"></div>
+    Recomendaciones de corpus y fuentes
+  </div>
+
+  <div class="recs-grid">
+
+    <div class="rec-card" style="border-top: 3px solid #1a73e8;">
+      <div class="rec-header">
+        <div class="rec-num" style="background:#e8f0fe; color:#1a73e8;">★</div>
+        <div>
+          <div class="rec-title">Cenital vs. Anfibia — Inteligencia Artificial</div>
+          <div class="rec-sub">Medio vs. medio · Opción más recomendada</div>
+        </div>
+      </div>
+      <div class="rec-body">
+        <strong>Cenital</strong> cubre IA desde una perspectiva técnico-analítica (Valentín Muro, sección "Tecnología"). <strong>Anfibia</strong> desde una perspectiva socio-política y crítica. Mismo tema, diferentes marcos discursivos. Trafilatura funciona bien en ambos. El corpus del Lab 6 ya usa Cenital como referencia.
+      </div>
+      <div class="rec-links">
+        <a class="rec-link" href="https://cenital.com/categoria/tecnologia/" target="_blank">cenital.com/categoria/tecnologia/</a>
+        <a class="rec-link" href="https://revistaanfibia.com/ciencia-y-tecnologia/" target="_blank">revistaanfibia.com/ciencia-y-tecnologia/</a>
+      </div>
+      <div class="rec-star">💡 Ya tenés código funcionando con Cenital en el laboratorio integrador (sección 6). Reutilizar esa lógica de scraping.</div>
+    </div>
+
+    <div class="rec-card" style="border-top: 3px solid #1e8e4a;">
+      <div class="rec-header">
+        <div class="rec-num" style="background:#e8f5e9; color:#1e8e4a;">2</div>
+        <div>
+          <div class="rec-title">Cenital vs. Chequeado — Cambio climático</div>
+          <div class="rec-sub">Medio vs. medio · Periodismo de divulgación vs. verificación</div>
+        </div>
+      </div>
+      <div class="rec-body">
+        <strong>Cenital</strong> publica análisis de largo aliento sobre política ambiental. <strong>Chequeado</strong> se focaliza en verificación de datos y claims puntuales. Contraste discursivo muy marcado: narrativo vs. factual. Corpus acotable a 3-5 piezas de cada medio.
+      </div>
+      <div class="rec-links">
+        <a class="rec-link" href="https://cenital.com/categoria/ambiente/" target="_blank">cenital.com/categoria/ambiente/</a>
+        <a class="rec-link" href="https://chequeado.com/tema/medio-ambiente/" target="_blank">chequeado.com/tema/medio-ambiente/</a>
+      </div>
+    </div>
+
+    <div class="rec-card" style="border-top: 3px solid #e37400;">
+      <div class="rec-header">
+        <div class="rec-num" style="background:#fff3e0; color:#e37400;">3</div>
+        <div>
+          <div class="rec-title">Columnista vs. columnista — Política económica</div>
+          <div class="rec-sub">Columnista vs. columnista · Análisis de marcos discursivos</div>
+        </div>
+      </div>
+      <div class="rec-body">
+        Elegir dos columnistas con posiciones distintas sobre la política económica del gobierno actual. Por ejemplo: <strong>Julia Strada</strong> (UNDAV, perspectiva heterodoxa) vs. <strong>Fausto Spotorno</strong> (OJF, perspectiva ortodoxa). Publicados en medios con archivo accesible (Infobae, Perfil, La Nación).
+      </div>
+      <div class="rec-links">
+        <a class="rec-link" href="https://www.infobae.com/autores/" target="_blank">infobae.com/autores/</a>
+        <a class="rec-link" href="https://www.perfil.com/columnistas/" target="_blank">perfil.com/columnistas/</a>
+      </div>
+      <div class="rec-star">⚠️ Verificar que Trafilatura pueda scraping de estos medios antes de elegir el corpus.</div>
+    </div>
+
+    <div class="rec-card" style="border-top: 3px solid #7b1fa2;">
+      <div class="rec-header">
+        <div class="rec-num" style="background:#f3e5f5; color:#7b1fa2;">4</div>
+        <div>
+          <div class="rec-title">El Gato y La Caja vs. Cenital — Ciencia</div>
+          <div class="rec-sub">Medio vs. medio · Divulgación científica vs. análisis político-científico</div>
+        </div>
+      </div>
+      <div class="rec-body">
+        <strong>El Gato y La Caja</strong> hace divulgación de evidencia empírica con tono accesible. <strong>Cenital</strong> contextualiza la ciencia en la política y la sociedad. Excelente contraste entre registro divulgativo y registro analítico. Temática: IA, salud, educación o cambio climático.
+      </div>
+      <div class="rec-links">
+        <a class="rec-link" href="https://elgatoylacaja.com/categoria/ciencia/" target="_blank">elgatoylacaja.com/categoria/ciencia/</a>
+        <a class="rec-link" href="https://cenital.com/" target="_blank">cenital.com/</a>
+      </div>
+    </div>
+
+    <div class="rec-card" style="border-top: 3px solid #455a64;">
+      <div class="rec-header">
+        <div class="rec-num" style="background:#eceff1; color:#455a64;">5</div>
+        <div>
+          <div class="rec-title">Mismo columnista — Valentín Muro en distintas series</div>
+          <div class="rec-sub">Mismo columnista en contextos distintos</div>
+        </div>
+      </div>
+      <div class="rec-body">
+        Valentín Muro en Cenital cubre IA desde ángulos muy distintos: artículos sobre cognición/cerebro vs. artículos sobre economía política de la IA. Corpus controlado (mismo autor, mismo medio) con contraste temático claro. Ya tenés 3 textos de muestra en el Lab 6.
+      </div>
+      <div class="rec-links">
+        <a class="rec-link" href="https://cenital.com/autor/valentin-muro/" target="_blank">cenital.com/autor/valentin-muro/</a>
+      </div>
+      <div class="rec-star">💡 Ya tenés el scraping funcionando para este autor desde el laboratorio integrador.</div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- CHECKLIST RÁPIDO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-title" style="margin-top:44px;">
+    <div class="section-dot" style="background:#1a73e8;"></div>
+    Checklist de entrega — condiciones mínimas
+  </div>
+
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th>Elemento</th>
+        <th>Condición mínima</th>
+        <th>Peso en rúbrica</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Corpus estructurado</strong></td>
+        <td>CSV/JSONL con 6-10 textos, exactamente 2 grupos, columnas completas</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>Justificación del recorte</strong></td>
+        <td>Explica qué se compara, por qué, qué los vuelve comparables, qué límites ya ve</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>spaCy</strong></td>
+        <td>Lematización, filtrado, NER, bigramas implementados y corriendo</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>BoW + TF-IDF</strong></td>
+        <td>Ambas representaciones presentes y comparadas explícitamente (no alcanza con solo una)</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>Visualizaciones</strong></td>
+        <td>Al menos 2 gráficos analíticos: legibles, rotulados, pertinentes (no decorativos)</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>Fragmentos</strong></td>
+        <td>Volver a mínimo 3 citas concretas del corpus y comentarlas</td>
+        <td>25%</td>
+      </tr>
+      <tr>
+        <td><strong>Interpretación</strong></td>
+        <td>Hallazgos apoyados en tablas, gráficos y fragmentos (no solo descripción)</td>
+        <td>25%</td>
+      </tr>
+      <tr>
+        <td><strong>Límites del método</strong></td>
+        <td>Sección explícita: qué muestra y qué no puede mostrar este enfoque</td>
+        <td>15%</td>
+      </tr>
+      <tr>
+        <td><strong>Registro de uso de IA</strong></td>
+        <td>Tabla completa en sección 0 del notebook</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+</main>
+
+<footer>
+  Dashboard PLN · IFTS 24 · 2026 · Navas José — Material de apoyo para TPI 2: Text Mining y Análisis Discursivo Comparado
+</footer>
+
+</body>
+</html>

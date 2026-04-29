@@ -1,0 +1,19 @@
+# ============================================================
+# IFTS Nº 24 — Paquetes de Audio y ML pesados
+# Solo instalar para el módulo 002 (transcripción con Whisper)
+# Requiere: ffmpeg instalado en el sistema
+# ============================================================
+# Instalar con: pip install -r requirements-audio.txt
+#
+# Para PyTorch con GPU (CUDA 12.1):
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
+# Para PyTorch CPU (más rápido de instalar):
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+# ============================================================
+
+torch
+torchaudio
+transformers
+accelerate
+openai-whisper
+faster-whisper

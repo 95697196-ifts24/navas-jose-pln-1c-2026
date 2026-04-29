@@ -1,33 +1,57 @@
-# Script de configuración inicial para Windows (PowerShell)
-# Laboratorio de PLN - IFTS 24
+# ============================================================
+# Script de configuracion inicial para Windows (PowerShell)
+# Laboratorio de PLN - IFTS N. 24 - 2026
+# Uso: powershell -ExecutionPolicy Bypass -File setup.ps1
+# ============================================================
 
-Write-Host "🚀 Iniciando configuración del entorno..." -ForegroundColor Cyan
+$PythonExe = "$env:USERPROFILE\.local\bin\python3.11.exe"
+$VenvPath = ".venv"
+$Pip = "$VenvPath\Scripts\pip.exe"
+$Python = "$VenvPath\Scripts\python.exe"
 
-# 1. Crear entorno virtual si no existe
-if (-not (Test-Path ".venv")) {
-    Write-Host "📦 Creando entorno virtual..." -ForegroundColor Yellow
-    python -m venv .venv
-} else {
-    Write-Host "✅ El entorno virtual ya existe." -ForegroundColor Green
+Write-Host "Iniciando configuracion del entorno PLN..." -ForegroundColor Cyan
+
+# --- Verificar Python 3.11 ---
+if (-not (Test-Path $PythonExe)) {
+    Write-Host "ERROR: Python 3.11 no encontrado en $PythonExe" -ForegroundColor Red
+    Write-Host "Instalar con: winget install Astral-sh.uv" -ForegroundColor Yellow
+    Write-Host "Luego: uv python install 3.11" -ForegroundColor Yellow
+    exit 1
 }
 
-# 2. Activar entorno e instalar dependencias
-Write-Host "📥 Instalando dependencias de Python..." -ForegroundColor Yellow
-& .\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+# --- Crear entorno virtual ---
+if (-not (Test-Path $VenvPath)) {
+    Write-Host "Creando entorno virtual con Python 3.11..." -ForegroundColor Yellow
+    & $PythonExe -m venv $VenvPath
+} else {
+    Write-Host "El entorno virtual ya existe." -ForegroundColor Green
+}
 
-# 3. Instalar navegadores de Playwright
-Write-Host "🌐 Instalando navegadores para Web Scraping..." -ForegroundColor Yellow
-playwright install
+# --- Actualizar pip ---
+Write-Host "Actualizando pip..." -ForegroundColor Yellow
+& $Python -m pip install --upgrade pip --quiet
 
-# 4. Descargar recursos de NLTK
-Write-Host "📚 Descargando recursos de NLTK..." -ForegroundColor Yellow
-python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt_tab')"
+# --- Instalar dependencias core ---
+Write-Host "Instalando paquetes core de PLN..." -ForegroundColor Yellow
+& $Pip install -r requirements.txt
 
-# 5. Instalar Scrapling components
-Write-Host "🕷️ Instalando componentes de Scrapling..." -ForegroundColor Yellow
-pip install scrapling
+# --- Instalar navegadores Playwright ---
+Write-Host "Instalando navegadores para Web Scraping..." -ForegroundColor Yellow
+& $VenvPath\Scripts\playwright.exe install chromium
 
-Write-Host "✨ ¡Configuración completada con éxito!" -ForegroundColor Green
-Write-Host "💡 Para activar el entorno manualmente usa: .\.venv\Scripts\Activate.ps1" -ForegroundColor Gray
+# --- Descargar recursos NLTK ---
+Write-Host "Descargando recursos NLTK..." -ForegroundColor Yellow
+& $Python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt_tab')"
+
+# --- Descargar modelos spaCy ---
+Write-Host "Descargando modelos spaCy en espanol..." -ForegroundColor Yellow
+& $Python -m spacy download es_core_news_sm
+& $Python -m spacy download es_core_news_md
+
+Write-Host ""
+Write-Host "Configuracion completada." -ForegroundColor Green
+Write-Host "Para activar el entorno: .\.venv\Scripts\Activate.ps1" -ForegroundColor Gray
+Write-Host "Para JupyterLab: jupyter lab" -ForegroundColor Gray
+Write-Host ""
+Write-Host "Para instalar soporte de audio (Whisper/Torch):" -ForegroundColor Yellow
+Write-Host "  pip install -r requirements-audio.txt" -ForegroundColor Yellow
