@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Tecnicas PLN - TP3</title>
+  <style>
+    :root{
+      --ink:#18212f;
+      --muted:#5e6b7c;
+      --line:#dbe3ec;
+      --paper:#f5f7fa;
+      --white:#ffffff;
+      --nav:#102033;
+      --blue:#245a8d;
+      --teal:#157a76;
+      --green:#3f7f5f;
+      --gold:#b7791f;
+      --red:#b44949;
+      --violet:#6a5a9c;
+      --shadow:0 12px 28px rgba(16,32,51,.10);
+      --radius:8px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:var(--paper);
+      line-height:1.55;
+    }
+    .layout{display:grid;grid-template-columns:282px 1fr;min-height:100vh}
+    aside{
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+      background:var(--nav);
+      color:#d7e4f0;
+      padding:26px 20px;
+    }
+    .brand{padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.13)}
+    .brand strong{display:block;color:#fff;font-size:1rem;line-height:1.25}
+    .brand span{display:block;margin-top:7px;color:#9fb9d2;font-size:.82rem}
+    nav{padding-top:18px}
+    nav a{
+      display:block;
+      color:#c6d5e3;
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:6px;
+      font-size:.9rem;
+    }
+    nav a:hover{background:rgba(255,255,255,.08);color:#fff}
+    main{min-width:0}
+    header{
+      background:linear-gradient(135deg,#102033 0%,#245a8d 67%,#157a76 100%);
+      color:#fff;
+      padding:46px min(6vw,70px);
+    }
+    header h1{margin:0;font-size:clamp(1.65rem,3vw,2.5rem);line-height:1.12;letter-spacing:0}
+    header p{max-width:880px;margin:14px 0 0;color:#d8e5f0;font-size:1rem}
+    .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .badge{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:5px 11px;font-size:.78rem;background:rgba(255,255,255,.08)}
+    section{padding:32px min(6vw,70px);border-bottom:1px solid var(--line)}
+    h2{font-size:1.35rem;margin:0 0 14px}
+    h3{font-size:1rem;margin:0 0 8px}
+    p{margin:0 0 12px}
+    .grid{display:grid;gap:16px}
+    .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .four{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{
+      background:var(--white);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .compact{box-shadow:none}
+    .metric{font-size:1.75rem;font-weight:750;color:var(--blue);line-height:1}
+    .label{color:var(--muted);font-size:.86rem;margin-top:6px}
+    .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:.74rem;font-weight:700;margin-bottom:10px}
+    .p-blue{background:#dcebf7;color:#174a75}.p-teal{background:#d7efed;color:#0f5f5b}.p-gold{background:#faecd1;color:#76500f}
+    .p-red{background:#f6dddd;color:#823333}.p-violet{background:#e8e3f7;color:#4d4079}.p-green{background:#e0efe5;color:#2f6548}
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+    th,td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;font-size:.9rem}
+    th{background:#edf2f7;color:#2b3a4d;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+    tr:last-child td{border-bottom:0}
+    ul{margin:8px 0 0 18px;padding:0}
+    li{margin:5px 0}
+    .bar-row{display:grid;grid-template-columns:150px 1fr 70px;gap:12px;align-items:center;margin:12px 0}
+    .track{height:14px;background:#e6edf4;border-radius:999px;overflow:hidden}
+    .fill{height:100%;border-radius:999px;background:var(--blue)}
+    .fill.teal{background:var(--teal)}
+    .timeline{counter-reset:step;display:grid;gap:12px}
+    .step{position:relative;padding-left:46px}
+    .step:before{
+      counter-increment:step;
+      content:counter(step);
+      position:absolute;left:0;top:0;
+      width:30px;height:30px;border-radius:50%;
+      display:grid;place-items:center;
+      background:var(--blue);color:#fff;font-weight:800;font-size:.86rem;
+    }
+    .heatmap{display:grid;grid-template-columns:150px repeat(2,1fr);gap:6px;align-items:stretch}
+    .heatmap div{padding:10px;border-radius:6px;background:#fff;border:1px solid var(--line);font-size:.86rem}
+    .heatmap .head{background:#102033;color:#fff;font-weight:700;text-align:center}
+    .heatmap .term{font-weight:700;background:#edf2f7}
+    .h1{background:#e8f1f8!important}.h2{background:#cfe4f2!important}.h3{background:#a9cfe5!important}.h4{background:#7fb7d5!important;color:#102033}.h5{background:#4e95bd!important;color:#fff}
+    .note{border-left:4px solid var(--teal);background:#eef7f6;padding:13px 15px;border-radius:0 var(--radius) var(--radius) 0;color:#24414a}
+    code{background:#edf2f7;border:1px solid #d8e2ec;border-radius:5px;padding:1px 5px}
+    .small{font-size:.86rem;color:var(--muted)}
+    footer{padding:26px min(6vw,70px);color:var(--muted)}
+    @media (max-width:900px){
+      .layout{grid-template-columns:1fr}
+      aside{position:relative;height:auto}
+      .two,.three,.four{grid-template-columns:1fr}
+      .bar-row{grid-template-columns:1fr}
+      .heatmap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <strong>Dashboard Tecnicas PLN - TP3</strong>
+        <span>Guia academica para analizar TP3 Recuperatorio Grupal 1 y 2</span>
+      </div>
+      <nav>
+        <a href="#panorama">Panorama</a>
+        <a href="#corpus">Corpus TP3</a>
+        <a href="#tecnicas">Tecnicas usadas</a>
+        <a href="#interpretacion">Como interpretar</a>
+        <a href="#roadmap">Roadmap TP3</a>
+        <a href="#graficos">Graficos guia</a>
+        <a href="#plus">Tecnicas plus</a>
+        <a href="#recomendaciones">Recomendaciones</a>
+        <a href="#checklist">Checklist final</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header>
+        <h1>Mapa de tecnicas para analizar resultados del TP3</h1>
+        <p>Este dashboard resume las tecnicas encontradas en el proyecto: adquisicion y validacion de corpus, auditoria, spaCy, stopwords, ajuste humano del pipeline, Bag of Words, TF-IDF, bigramas, entidades, visualizacion y vuelta a fragmentos. Esta pensado para estudiar, decidir que mirar y justificar hallazgos con evidencia.</p>
+        <div class="badges">
+          <span class="badge">Archivo autonomo</span>
+          <span class="badge">Nivel principiante</span>
+          <span class="badge">Paleta profesional</span>
+          <span class="badge">Sin dependencias externas</span>
+        </div>
+      </header>
+
+      <section id="panorama">
+        <h2>Panorama</h2>
+        <div class="grid four">
+          <div class="card"><div class="metric">12</div><div class="label">textos requeridos por TP3</div></div>
+          <div class="card"><div class="metric">2</div><div class="label">grupos comparables: mit y bbc</div></div>
+          <div class="card"><div class="metric">6 + 6</div><div class="label">distribucion equilibrada por medio</div></div>
+          <div class="card"><div class="metric">3</div><div class="label">ejes: corpus, pipeline, evidencia</div></div>
+        </div>
+        <p class="note" style="margin-top:18px">Idea central: el algoritmo no reemplaza la lectura. Sirve para detectar patrones, elegir fragmentos relevantes y construir una interpretacion defendible.</p>
+      </section>
+
+      <section id="corpus">
+        <h2>Corpus TP3</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>Resumen del corpus encontrado</h3>
+            <div class="bar-row"><strong>MIT</strong><div class="track"><div class="fill" style="width:100%"></div></div><span>11.574 palabras</span></div>
+            <div class="bar-row"><strong>BBC</strong><div class="track"><div class="fill teal" style="width:81%"></div></div><span>9.372 palabras</span></div>
+            <p class="small">Aunque hay 6 textos por grupo, MIT tiene mas palabras. Eso no invalida el analisis, pero conviene comparar promedios o pesos relativos, no solo conteos brutos.</p>
+          </div>
+          <div class="card">
+            <h3>Pregunta analitica posible</h3>
+            <p>Como construyen discursivamente la inteligencia artificial dos medios distintos: MIT Technology Review y BBC.</p>
+            <ul>
+              <li>MIT tiende a un registro tecnico, empresarial e innovador.</li>
+              <li>BBC puede enfatizar riesgos sociales, culturales, psicologicos o politicos.</li>
+              <li>La evidencia debe salir de terminos, entidades, bigramas y fragmentos concretos.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="tecnicas">
+        <h2>Tecnicas usadas en el proyecto</h2>
+        <div class="grid three">
+          <div class="card">
+            <span class="pill p-blue">Corpus</span>
+            <h3>Carga, validacion y auditoria</h3>
+            <p>Verifica columnas, cantidad de textos, grupos, fechas, titulos, URLs y balance de palabras.</p>
+            <p><strong>Usar cuando:</strong> antes de interpretar cualquier salida.</p>
+            <p><strong>No alcanza cuando:</strong> el corpus no es comparable o faltan metadatos.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-teal">spaCy</span>
+            <h3>Tokenizacion y lematizacion</h3>
+            <p>Separa el texto en tokens y agrupa variantes bajo una forma base: "avanza", "avanzan" -> "avanzar".</p>
+            <p><strong>Usar cuando:</strong> queres contar conceptos y no formas aisladas.</p>
+            <p><strong>Cuidado:</strong> revisar errores de lema en español y nombres propios.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-green">spaCy</span>
+            <h3>POS, dependencias y morfologia</h3>
+            <p>Identifica categorias gramaticales, relaciones sintacticas y rasgos como genero, numero o persona.</p>
+            <p><strong>Usar cuando:</strong> queres saber si predominan acciones, actores, objetos o atributos.</p>
+            <p><strong>No usar solo:</strong> para afirmar ideologia sin volver al texto.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-violet">NER</span>
+            <h3>Entidades nombradas</h3>
+            <p>Detecta personas, organizaciones, lugares y otros nombres relevantes.</p>
+            <p><strong>Usar cuando:</strong> queres ver que actores aparecen en cada medio.</p>
+            <p><strong>Cuidado:</strong> puede confundir siglas, productos, modelos o instituciones.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-gold">Limpieza</span>
+            <h3>Stopwords spaCy vs NLTK</h3>
+            <p>Compara listas de palabras frecuentes que se eliminan para reducir ruido.</p>
+            <p><strong>Usar cuando:</strong> terminos como articulos o verbos genericos dominan el ranking.</p>
+            <p><strong>No eliminar:</strong> palabras que son relevantes para la pregunta, por ejemplo "riesgo" o "empresa".</p>
+          </div>
+          <div class="card">
+            <span class="pill p-red">Ajuste humano</span>
+            <h3>Stopwords propias, lemas, Matcher y EntityRuler</h3>
+            <p>Corrige errores del modelo y captura expresiones como "inteligencia artificial" o nombres de empresas.</p>
+            <p><strong>Usar cuando:</strong> el modelo falla ante expresiones del corpus.</p>
+            <p><strong>Registrar siempre:</strong> que cambiaste y por que.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-blue">Vectorizacion</span>
+            <h3>Bag of Words</h3>
+            <p>Cuenta frecuencia de terminos. Responde: "que palabras aparecen mas".</p>
+            <p><strong>Usar cuando:</strong> queres una primera foto del vocabulario dominante.</p>
+            <p><strong>Limite:</strong> favorece textos mas largos y palabras generales.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-teal">Vectorizacion</span>
+            <h3>TF-IDF</h3>
+            <p>Pondera terminos frecuentes en un grupo pero menos comunes en el resto.</p>
+            <p><strong>Usar cuando:</strong> queres vocabulario distintivo.</p>
+            <p><strong>No significa:</strong> importancia ideologica automatica; indica donde mirar.</p>
+          </div>
+          <div class="card">
+            <span class="pill p-green">N-gramas</span>
+            <h3>Bigramas</h3>
+            <p>Detecta pares de palabras consecutivas: "datos empresariales", "riesgo social", "modelo IA".</p>
+            <p><strong>Usar cuando:</strong> una palabra sola pierde contexto.</p>
+            <p><strong>Cuidado:</strong> bigramas raros pueden ser ruido si aparecen una sola vez.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="interpretacion">
+        <h2>Como interpretar la informacion</h2>
+        <table>
+          <thead><tr><th>Resultado</th><th>Que te dice</th><th>Como leerlo academicamente</th></tr></thead>
+          <tbody>
+            <tr><td>Top de frecuencia</td><td>Vocabulario mas repetido.</td><td>Sirve para describir el terreno, pero no alcanza para afirmar diferencias profundas.</td></tr>
+            <tr><td>Top TF-IDF</td><td>Terminos mas distintivos de cada grupo.</td><td>Convertir cada termino en hipotesis: por que aparece, en que titulos, con que tono.</td></tr>
+            <tr><td>Bigramas</td><td>Asociaciones lexicales.</td><td>Interpretar encuadres: tecnologia como negocio, amenaza, regulacion, salud, educacion, etc.</td></tr>
+            <tr><td>Entidades</td><td>Actores mencionados.</td><td>Preguntar quien tiene agencia en el relato: empresas, gobiernos, expertos, usuarios, victimas.</td></tr>
+            <tr><td>Fragmentos</td><td>Contexto cualitativo del patron.</td><td>La evidencia final debe citar o resumir fragmentos: el numero orienta, el texto confirma.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="roadmap">
+        <h2>Roadmap para resolver y analizar Grupal1 y Grupal2</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>TP3_Recuperatorio_Grupal1</h3>
+            <div class="timeline">
+              <div class="step"><strong>Definir comparacion.</strong><br>Explicar tema, medios, periodo, criterio de inclusion y limites.</div>
+              <div class="step"><strong>Validar corpus.</strong><br>Comprobar 12 textos, 6 por grupo, columnas obligatorias y textos no vacios.</div>
+              <div class="step"><strong>Auditar balance.</strong><br>Comparar cantidad de palabras por grupo para evitar conclusiones basadas solo en volumen.</div>
+              <div class="step"><strong>Inspeccionar spaCy.</strong><br>Mirar tokens, lemas, POS, dependencias, entidades y morfologia en fragmentos.</div>
+              <div class="step"><strong>Comparar stopwords.</strong><br>Probar spaCy y NLTK, decidir una base y justificar ajustes.</div>
+              <div class="step"><strong>Vectorizar.</strong><br>Comparar BoW, TF-IDF y bigramas sobre <code>texto_modelo</code>.</div>
+              <div class="step"><strong>Volver al corpus.</strong><br>Tomar los terminos TF-IDF mas fuertes y leer fragmentos donde aparecen.</div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>TP3_Recuperatorio_Grupal2</h3>
+            <div class="timeline">
+              <div class="step"><strong>Repetir la base metodologica.</strong><br>No saltear validacion ni auditoria aunque el notebook ya corra.</div>
+              <div class="step"><strong>Profundizar entidades.</strong><br>Comparar tipos y entidades concretas por grupo: empresas, modelos, gobiernos, expertos.</div>
+              <div class="step"><strong>Revisar limpieza manual.</strong><br>En este corpus conviene discutir si <code>ia</code> y <code>ai</code> se eliminan o se conservan.</div>
+              <div class="step"><strong>Contrastar frecuencia vs distintividad.</strong><br>Si una palabra es muy frecuente pero no distintiva, probablemente describe el tema general.</div>
+              <div class="step"><strong>Analizar encuadres.</strong><br>Agrupar terminos por campos: negocio, riesgo, investigacion, salud mental, regulacion, educacion.</div>
+              <div class="step"><strong>Construir conclusion.</strong><br>Separar hallazgos defendibles, limites del corpus y limites de BoW/TF-IDF.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="graficos">
+        <h2>Graficos guia para entender resultados</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>Balance de palabras por grupo</h3>
+            <div class="bar-row"><strong>MIT</strong><div class="track"><div class="fill" style="width:100%"></div></div><span>55,3%</span></div>
+            <div class="bar-row"><strong>BBC</strong><div class="track"><div class="fill teal" style="width:81%"></div></div><span>44,7%</span></div>
+            <p class="small">Interpretacion: si MIT tiene mas palabras, un conteo absoluto puede sobrerrepresentarlo. TF-IDF y promedios por grupo ayudan a compensar.</p>
+          </div>
+          <div class="card">
+            <h3>Heatmap conceptual de evidencias</h3>
+            <div class="heatmap">
+              <div></div><div class="head">MIT</div><div class="head">BBC</div>
+              <div class="term">Empresas / datos</div><div class="h5">alto</div><div class="h2">medio</div>
+              <div class="term">Riesgo social</div><div class="h2">medio</div><div class="h5">alto</div>
+              <div class="term">Modelos / tecnologia</div><div class="h4">alto</div><div class="h3">medio</div>
+              <div class="term">Usuarios / impacto</div><div class="h2">medio</div><div class="h4">alto</div>
+            </div>
+            <p class="small">Usa este esquema como plantilla: reemplaza las categorias por tus top TF-IDF y bigramas reales.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="plus">
+        <h2>Tecnicas plus para mejorar el analisis</h2>
+        <div class="grid three">
+          <div class="card compact">
+            <h3>Normalizacion por longitud</h3>
+            <p>Comparar frecuencias por cada 1.000 palabras. Ayuda cuando un grupo tiene textos mas largos.</p>
+          </div>
+          <div class="card compact">
+            <h3>Concordancias</h3>
+            <p>Ver varias apariciones de un termino con una ventana de contexto. Excelente para lectura cercana.</p>
+          </div>
+          <div class="card compact">
+            <h3>Campos semanticos manuales</h3>
+            <p>Agrupar terminos en categorias: economia, seguridad, educacion, investigacion, emociones, regulacion.</p>
+          </div>
+          <div class="card compact">
+            <h3>Similitud coseno</h3>
+            <p>Comparar documentos con vectores TF-IDF para ver cuales se parecen mas dentro y entre grupos.</p>
+          </div>
+          <div class="card compact">
+            <h3>Red de coocurrencias</h3>
+            <p>Unir palabras que aparecen cerca. Permite ver asociaciones fuertes alrededor de "IA".</p>
+          </div>
+          <div class="card compact">
+            <h3>Embeddings</h3>
+            <p>Capturan cercania semantica mejor que BoW/TF-IDF, pero requieren mas cuidado para explicar el metodo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recomendaciones">
+        <h2>Recomendaciones para tu analisis</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>Como escribir hallazgos</h3>
+            <ul>
+              <li>Empeza con una observacion medible: "en BBC aparecen con mayor peso terminos vinculados a riesgo".</li>
+              <li>Mostra evidencia: top TF-IDF, bigramas o entidades.</li>
+              <li>Volve a 2 o 3 fragmentos y explica el contexto.</li>
+              <li>Cerra con un limite: corpus chico, fechas distintas, dependencia del preprocesamiento.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Errores frecuentes</h3>
+            <ul>
+              <li>Confundir frecuencia con importancia.</li>
+              <li>Eliminar stopwords sin mirar si se pierde informacion relevante.</li>
+              <li>Concluir "el medio piensa X" sin revisar fragmentos.</li>
+              <li>No documentar ajustes manuales de lemas, entidades o stopwords.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="checklist">
+        <h2>Checklist final</h2>
+        <table>
+          <thead><tr><th>Item</th><th>Pregunta de control</th></tr></thead>
+          <tbody>
+            <tr><td>Corpus</td><td>Hay 12 textos, 6 por grupo, con fuente, fecha, titulo, URL y texto completo.</td></tr>
+            <tr><td>Metodologia</td><td>Esta explicado que se compara, por que esos textos y que limites tiene el recorte.</td></tr>
+            <tr><td>Pipeline</td><td>Se inspeccionaron tokens, lemas, POS, entidades y errores del modelo.</td></tr>
+            <tr><td>Ajuste humano</td><td>Hay al menos un ajuste lexico y uno estructural, ambos justificados.</td></tr>
+            <tr><td>Analisis</td><td>Se comparan BoW, TF-IDF y bigramas con visualizaciones legibles.</td></tr>
+            <tr><td>Interpretacion</td><td>Los patrones numericos se verifican con fragmentos concretos del corpus.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>
+        Archivo: <code>Extras/dashboard_tecnicas_tp_3.html</code>. Se puede abrir directamente en el navegador.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
