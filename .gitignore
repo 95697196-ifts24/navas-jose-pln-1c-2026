@@ -1,33 +1,64 @@
 # Entorno virtual
 .venv/
+venv/
+env/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/
 
 # OS
 Thumbs.db
+ehthumbs.db
 .DS_Store
+desktop.ini
 
 # IDE
 .vscode/
 .idea/
 
-# Secrets
+# Secrets y configuracion local
 .env
+.env.*
 *.key
+*.pem
 
+# Archivos temporales de Office
+~$*.docx
+~$*.xlsx
+~$*.pptx
+*.tmp
+
+# Notas o sincronizacion local
 SYNC.md
 
-# Carpeta de trabajo
+# Carpetas de trabajo local no versionadas
 docs/
 007_tpi_2/legado/
 
-# Archivos temporales de audio (generados por yt-dlp/Whisper)
+# Audio/video y transcripciones pesadas generadas localmente
+audio_tpi1/
 audio_tpi1
 audio_tpi1.mp3
 *.mp3
 *.mp4
 *.wav
+*.m4a
+*.webm
+*.srt
+*.vtt
+
+# Salidas generadas que pueden reconstruirse
+outputs/
+output/
+artifacts/
+*.log

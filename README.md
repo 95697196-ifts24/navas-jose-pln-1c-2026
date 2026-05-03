@@ -1,170 +1,221 @@
-# Laboratorio de Introducción al PLN, LLMs y Agentic AI
+# navas-jose-pln-1c-2026
 
-**IFTS Nº 24 — Ciencia de Datos e Inteligencia Artificial**
-**2do año — 1er cuatrimestre 2026**
-**Prof. Matías Barreto** — Especialista en Nuevos Medios e Interactividad
-matiasbarreto@ifts24.edu.ar
+Repositorio de trabajo para la materia de Procesamiento de Lenguaje Natural, LLMs y Agentic AI del IFTS Nro. 24, primer cuatrimestre 2026.
 
-_Lenguaje, Algoritmos y Construcción del Presente_
+El proyecto contiene notebooks de clase, trabajos practicos integradores, corpus de analisis y dashboards de apoyo para estudiar tecnicas de PLN aplicadas a textos periodisticos, scraping, spaCy, vectorizacion, text mining y representaciones semanticas.
 
----
-
-## 📖 Qué es este repositorio
- 
- Este repositorio contiene los notebooks de laboratorio de la materia. El material se organiza en carpetas numeradas que se publican semana a semana a medida que avanza la cursada.
- 
- Cada carpeta corresponde a un bloque temático y contiene los notebooks (`.ipynb`) necesarios para trabajar en clase y fuera de ella.
- 
- ---
-
-## 🛠️ Requisitos previos
-
-Antes de arrancar, asegurate de tener instalado en tu máquina:
-
-1. **Python 3.11 o superior** — [Descarga oficial](https://www.python.org/downloads/)
-   - Durante la instalación en Windows, marcá la opción **"Add Python to PATH"**.
-2. **Git** — [Descarga oficial](https://git-scm.com/downloads)
-3. **Visual Studio Code** (recomendado) — [Descarga oficial](https://code.visualstudio.com/)
-   - Instalá la extensión **Jupyter** desde el marketplace de VS Code.
-4. **FFmpeg** (requerido para notebooks de audio/video, como descargas de YouTube y transcripción con Whisper)
-   - **Windows:** `winget install Gyan.FFmpeg` o `choco install ffmpeg`
-   - **Ubuntu/Debian:** `sudo apt install ffmpeg`
-   - **macOS:** `brew install ffmpeg`
-
----
-
-## 🚀 Setup inicial
-
-Abrí una terminal (en Windows: PowerShell o Git Bash) y ejecutá los siguientes comandos:
-
-### 1. Clonar el repositorio y entrar
-```bash
-git clone https://github.com/mattbarreto/ifts24-lab-pln-2026.git
-cd ifts24-lab-pln-2026
-```
-
-### Opción A (Recomendada): Manual paso a paso
-
-Este es el método estándar para aprender cómo se gestiona un entorno de Python:
-
-1. **Crear el entorno virtual**
-   ```bash
-   python -m venv .venv
-   ```
-
-2. **Activar el entorno virtual**
-   - **Windows:** `.venv\Scripts\Activate.ps1` (PowerShell) o `.venv\Scripts\activate` (CMD/Bash)
-   - **macOS / Linux:** `source .venv/bin/activate`
-
-3. **Instalar dependencias y recursos**
-   ```bash
-   pip install -r requirements.txt
-   playwright install
-   python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt_tab')"
-   ```
-
-### Opción B: Instalación Automatizada (Avanzado)
-
-Si ya sabés cómo funcionan los entornos virtuales, podés usar los scripts incluidos:
-- **Windows:** `.\setup.ps1`
-- **macOS / Linux:** `./setup.sh`
-
----
-
-## ☁️ Alternativa: Google Colab
-
-Si tenés problemas técnicos con tu computadora local, podés usar Google Colab. 
-1. Subí el archivo `.ipynb` a [colab.research.google.com](https://colab.research.google.com).
-2. Al principio de cada notebook, deberás instalar las dependencias manualmente agregando una celda:
-```bash
-!pip install nltk spacy beautifulsoup4 playwright
-!playwright install
-```
-**Nota:** Algunas funciones que requieren `FFmpeg` local o navegadores específicos pueden comportarse distinto en Colab.
-
----
-
-## 🎬 Configuración de FFmpeg (Audio/Video)
-
-Si vas a trabajar con audio (Whisper, transcripciones), necesitás FFmpeg instalado en el sistema:
-
-- **Windows:** `winget install Gyan.FFmpeg`
-- **Ubuntu/Debian:** `sudo apt install ffmpeg`
-- **macOS:** `brew install ffmpeg`
-
-> [!TIP]
-> Si Jupyter no detecta FFmpeg a pesar de haberlo instalado, consultá la sección de **Resolución de problemas** al final.
-
----
-
-## 🔄 Cómo actualizar cada semana
-
-Cada vez que se publique material nuevo, desde la carpeta del repositorio ejecutá:
+## Repositorio
 
 ```bash
-git pull
+git clone https://github.com/95697196-ifts24/navas-jose-pln-1c-2026.git
+cd navas-jose-pln-1c-2026
 ```
 
-Si se agregan nuevas dependencias, se anunciará en clase. En ese caso, con el entorno activado:
+Si el remoto local apunta a otro repositorio, corregirlo con:
+
+```bash
+git remote set-url origin https://github.com/95697196-ifts24/navas-jose-pln-1c-2026.git
+git remote -v
+```
+
+## Requisitos
+
+- Python 3.11 o superior.
+- Git.
+- Visual Studio Code con extension Jupyter.
+- FFmpeg para notebooks de audio, video o Whisper.
+- Navegadores de Playwright para notebooks de scraping dinamico.
+
+En Windows, FFmpeg puede instalarse con:
+
+```powershell
+winget install Gyan.FFmpeg
+```
+
+## Instalacion
+
+### Opcion recomendada
+
+```bash
+python -m venv .venv
+```
+
+Activar el entorno:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Instalar dependencias:
+
+```bash
+pip install -r requirements.txt
+playwright install
+python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
+```
+
+Para notebooks de audio:
+
+```bash
+pip install -r requirements-audio.txt
+```
+
+### Scripts incluidos
+
+En Windows:
+
+```powershell
+.\setup.ps1
+```
+
+En macOS o Linux:
+
+```bash
+./setup.sh
+```
+
+## Estructura del proyecto
+
+```text
+navas-jose-pln-1c-2026/
+├── 001_python/                         # Fundamentos de Python para PLN
+├── 002_adquisicion_corpus/             # Requests, scraping, Trafilatura, Playwright, audio
+├── 003_spacy/                          # Pipeline spaCy, tokens, lemas, POS, NER, Matcher
+├── 004_tpi_1/                          # Trabajo practico integrador 1
+├── 005_Vectorizacion/                  # Bag of Words, TF-IDF y n-gramas
+├── 006_lab_integrador_guiado/          # Laboratorio integrador guiado
+├── 007_tpi_2/                          # Trabajo practico integrador 2
+├── 007_tpi_3/                          # TP3 recuperatorio y corpus de trabajo
+├── 008_representaciones_semanticas/    # Coocurrencias, embeddings y semantica
+├── 009_tpi3_text_mining_recuperatorio/ # Version de trabajo del TP3 text mining
+├── Extras/                             # Dashboards HTML de apoyo
+├── Guias/                              # Guias complementarias
+├── requirements.txt
+├── requirements-audio.txt
+└── README.md
+```
+
+## TP3 recuperatorio
+
+La carpeta `007_tpi_3/` contiene los materiales principales para el TP3:
+
+- `TP3_Recuperatorio_Grupal1.ipynb`
+- `TP3_Recuperatorio_Grupal2.ipynb`
+- `corpus_tp3.csv`
+- `TP3.pptx`
+
+El trabajo se centra en un corpus comparativo de 12 textos sobre inteligencia artificial:
+
+- 6 textos del grupo `mit`
+- 6 textos del grupo `bbc`
+
+Tecnicas principales utilizadas:
+
+- validacion y auditoria del corpus;
+- normalizacion de columnas y fechas;
+- procesamiento con spaCy;
+- tokenizacion, lematizacion, POS, dependencias y rasgos morfologicos;
+- reconocimiento de entidades nombradas;
+- comparacion de stopwords de spaCy y NLTK;
+- ajustes humanos del pipeline con stopwords propias, correcciones de lemas, `Matcher` y `EntityRuler`;
+- Bag of Words;
+- TF-IDF;
+- bigramas;
+- visualizaciones con Matplotlib y Seaborn;
+- vuelta a fragmentos concretos para lectura cercana.
+
+## Dashboards
+
+La carpeta `Extras/` incluye dashboards HTML que se pueden abrir directamente en el navegador:
+
+- `dashboard_tecnicas_pln.html`: resumen general de tecnicas de PLN.
+- `dashboard_tecnicas_tp_3.html`: guia especifica para resolver y analizar el TP3 recuperatorio.
+
+Para abrirlos no hace falta levantar servidor. Se pueden abrir con doble clic o desde el navegador.
+
+## Flujo de trabajo con Git
+
+Ver estado:
+
+```bash
+git status
+```
+
+Agregar cambios:
+
+```bash
+git add .
+```
+
+Crear commit:
+
+```bash
+git commit -m "Actualiza avance del proyecto PLN"
+```
+
+Subir a GitHub:
+
+```bash
+git push origin main
+```
+
+Si la rama principal se llama `master`:
+
+```bash
+git push origin master
+```
+
+## Problemas frecuentes
+
+### El entorno virtual no activa en PowerShell
+
+Ejecutar:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Luego activar:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### Falta un paquete
+
+Con el entorno activado:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Si el material nuevo usa audio/video, verificá además que `ffmpeg` siga disponible en tu sistema con:
+### Falta el modelo de spaCy
+
+Para el TP3 se usa normalmente el modelo mediano de espanol:
 
 ```bash
-ffmpeg -version
+python -m spacy download es_core_news_md
 ```
 
----
+### Playwright no encuentra navegador
 
-## 📂 Estructura del repositorio
-
-```text
-ifts24-lab-pln-2026/
-├── README.md
-├── requirements.txt
-├── 001_python/
-├── 002_Adquisicion_Corpus/
-│   ├── 008_App_Transcripcion_Gradio.ipynb
-│   └── ...
-├── 003_spacy/
-├── Guias/
-└── ...
+```bash
+playwright install
 ```
 
----
+### GitHub devuelve error 403 al hacer push
 
-## 🛠️ Resolución de problemas frecuentes
+Verificar que `origin` apunte al repositorio correcto:
 
-**"python no se reconoce como comando"**
-Python no se agregó al PATH durante la instalación. Reinstalá marcando "Add Python to PATH", o usá `python3` en lugar de `python`.
+```bash
+git remote -v
+git remote set-url origin https://github.com/95697196-ifts24/navas-jose-pln-1c-2026.git
+```
 
-**"No module named 'xxx'"**
-Verificá que el entorno virtual esté activado (debés ver `(.venv)` al inicio de la línea en la terminal). Si lo está, ejecutá `pip install -r requirements.txt` de nuevo.
+## Nota academica
 
-**Error de permisos en PowerShell al activar el entorno**
-Ejecutá: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+Los notebooks y dashboards estan pensados como material de aprendizaje. Las tecnicas automaticas de PLN ayudan a detectar patrones, pero las conclusiones deben justificarse con decisiones metodologicas claras, visualizaciones legibles y lectura de fragmentos concretos del corpus.
 
-**Playwright no funciona / no encuentra navegador**
-Ejecutá `playwright install` con el entorno activado.
+## Licencia
 
-**FFmpeg no se detecta (Configuración de ruta manual)**
-Si ya lo instalaste pero aparece `FileNotFoundError`, podés indicarle la ruta manualmente antes de abrir Jupyter:
-
-- **Windows (PowerShell):**
-  ```powershell
-  $env:FFMPEG_PATH = (where.exe ffmpeg)[0]; jupyter lab
-  ```
-- **macOS / Linux:**
-  ```bash
-  export FFMPEG_PATH=$(which ffmpeg); jupyter lab
-  ```
-
----
-
-## 📜 Licencia
-
-Este material se distribuye bajo licencia [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es):
-podés usarlo y adaptarlo con atribución, sin fines comerciales, y compartiendo bajo la misma licencia.
+Material academico para uso educativo. Si se reutiliza o adapta, citar la fuente original de la cursada y mantener el uso no comercial.
